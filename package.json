@@ -5,6 +5,7 @@
     "gendiff": "bin/gendiff.js"
   },
   "description": "[![Actions Status](https://github.com/Timurkazan99/frontend-project-lvl2/workflows/hexlet-check/badge.svg)](https://github.com/Timurkazan99/frontend-project-lvl2/actions)",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
