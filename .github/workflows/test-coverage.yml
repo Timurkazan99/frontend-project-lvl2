@@ -34,7 +34,7 @@ jobs:
         node-version: '16'
     - run: npm install
     - run: npm run build --if-present
-    - uses: paambaati/codeclimate-action@v2.2.4
+    - uses: paambaati/codeclimate-action@v2.7.5
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATEKEY }}
       with:
