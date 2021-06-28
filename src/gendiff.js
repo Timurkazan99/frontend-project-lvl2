@@ -1,7 +1,10 @@
 import _ from 'lodash';
 import ParseFile from './parsers.js';
 
-const objIncude = (key, obj) => obj[key] !== undefined;
+const objInclude = (key, obj) => obj[key] !== undefined;
+const includeBoth = (key, obj1, obj2) => objInclude(key, obj1) && objInclude(key, obj2);
+const firstInclude = (key, obj1, obj2) => objInclude(key, obj1) && !objInclude(key, obj2);
+
 const isObject = (val) => {
   if (val === null) {
     return false;
@@ -24,6 +27,12 @@ const sortByKeys = (str1, str2) => {
   return temp;
 };
 
+const updateAfterSort = (obj, key, unordered) => {
+  const temp = { ...obj };
+  temp[key] = unordered[key];
+  return temp;
+};
+
 const getKeys = (obj) => {
   if (_.isEqual(obj, {})) {
     return [];
@@ -31,9 +40,30 @@ const getKeys = (obj) => {
   return Object.keys(obj);
 };
 
-const compareObj = (obj1, obj2) => {
-  const keys = _.uniq([...getKeys(obj1), ...getKeys(obj2)]);
+const getComon = (obj1, obj2) => {
+  const keys = _.uniq([...getKeys(obj1), ...getKeys(obj2)])
+    .filter((key) => includeBoth(key, obj1, obj2));
+  return keys;
+};
 
+const getUnique = (obj1, obj2) => {
+  const keys = _.uniq([...getKeys(obj1), ...getKeys(obj2)])
+    .filter((key) => firstInclude(key, obj1, obj2));
+  return keys;
+};
+
+const newKey = (acc, key, obj, prefix) => {
+  const temp = { ...acc };
+  temp[`${prefix} ${key}`] = obj[key];
+  return temp;
+};
+
+const propertyUptated = (acc, obj1, obj2, key) => {
+  acc[`- ${key}`] = obj1[key];
+  acc[`+ ${key}`] = obj2[key];
+};
+
+const compareObj = (obj1, obj2) => {
   const iter = (acc, key) => { // Функция для сравнения одинаковых свойств
     const temp = { ...acc };
     if (isObject(obj1[key]) && isObject(obj2[key])) {
@@ -41,37 +71,18 @@ const compareObj = (obj1, obj2) => {
     } else if (obj1[key] === obj2[key]) {
       temp[key] = obj1[key];
     } else {
-      const newKey1 = `- ${key}`;
-      const newKey2 = `+ ${key}`;
-      temp[newKey1] = obj1[key];
-      temp[newKey2] = obj2[key];
+      propertyUptated(temp, obj1, obj2, key);
     }
     return temp;
   };
 
-  const common = keys
-    .filter((key) => objIncude(key, obj1) && objIncude(key, obj2))
-    .reduce(iter, {});
-  const unique1 = {};
-  keys.filter((key) => objIncude(key, obj1) && !objIncude(key, obj2))
-    .map((key) => {
-      unique1[`- ${key}`] = obj1[key];
-      return obj1[key];
-    });
-  const unique2 = {};
-  keys.filter((key) => !objIncude(key, obj1) && objIncude(key, obj2))
-    .map((key) => {
-      unique2[`+ ${key}`] = obj2[key];
-      return obj2[key];
-    });
+  const common = getComon(obj1, obj2).reduce(iter, {});
+  const unique1 = getUnique(obj1, obj2).reduce((acc, key) => newKey(acc, key, obj1, '-'), {});
+  const unique2 = getUnique(obj2, obj1).reduce((acc, key) => newKey(acc, key, obj2, '+'), {});
   const unordered = { ...common, ...unique1, ...unique2 };
   const result = Object.keys(unordered)
     .sort(sortByKeys)
-    .reduce((obj, key) => {
-      const temp = { ...obj };
-      temp[key] = unordered[key];
-      return temp;
-    }, {});
+    .reduce((obj, key) => updateAfterSort(obj, key, unordered), {});
   return result;
 };
 
