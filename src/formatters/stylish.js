@@ -40,18 +40,4 @@ const formateStylish = (array) => {
   return result;
 };
 
-const getStyle = (style) => {
-  switch (style) {
-    case 'stylish':
-      return formateStylish;
-    default:
-      return formateStylish;
-  }
-};
-
-const formate = (array, style) => {
-  const fun = getStyle(style);
-  return fun(array);
-};
-
-export default formate;
+export default formateStylish;

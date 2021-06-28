@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import ParseFile from './parsers.js';
-import formate from './formate.js';
+import formate from './formatters/formate.js';
 
 const objInclude = (key, obj) => obj[key] !== undefined;
 const includeBoth = (key, obj1, obj2) => objInclude(key, obj1) && objInclude(key, obj2);
@@ -34,9 +34,18 @@ const getKeys = (obj1, obj2, fun) => {
   return keys;
 };
 
-const getAction = (key, value, action) => {
-  const result = { key, value, action };
-  return result;
+const getAction = (key, value, action, newValue = undefined) => {
+  const withoutNewValue = { key, value, action };
+  const withNewValue = {
+    key,
+    value,
+    action,
+    newValue,
+  };
+  if (newValue === undefined) {
+    return withoutNewValue;
+  }
+  return withNewValue;
 };
 
 const getAncestor = (ancestor, key) => (ancestor === '' ? key : `${ancestor}.${key}`);
@@ -50,7 +59,7 @@ const compareObj = (obj1, obj2, ancestor = '') => {
     } else if (obj1[key] === obj2[key]) {
       temp.push(getAction(newAncestor, obj1[key], 'nothing'));
     } else {
-      temp.push(getAction(newAncestor, obj1[key], '-Update'));
+      temp.push(getAction(newAncestor, obj1[key], '-Update', obj2[key]));
       temp.push(getAction(newAncestor, obj2[key], '+Update'));
     }
     return temp;

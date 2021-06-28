@@ -17,6 +17,15 @@ test('JSON/JSON stylish', () => {
   expect(actual1).toBe(right);
 });
 
+test('JSON/JSON plain', () => {
+  const path = getFixturePath('right.txt');
+  const right = fs.readFileSync(path, 'utf-8').trim();
+  const file1 = getFixturePath('file1.json');
+  const file2 = getFixturePath('file2.json');
+  const actual1 = gendiff(file1, file2, 'plain');
+  expect(actual1).toBe(right);
+});
+
 test('JSON/JSON default', () => {
   const path = getFixturePath('right.json');
   const right = fs.readFileSync(path, 'utf-8').trim();
@@ -32,6 +41,15 @@ test('YAML/YAML stylish', () => {
   const file1 = getFixturePath('file1.yaml');
   const file2 = getFixturePath('file2.yml');
   const actual1 = gendiff(file1, file2, 'stylish');
+  expect(actual1).toBe(right);
+});
+
+test('YAML/YAML plain', () => {
+  const path = getFixturePath('right.txt');
+  const right = fs.readFileSync(path, 'utf-8').trim();
+  const file1 = getFixturePath('file1.yaml');
+  const file2 = getFixturePath('file2.yml');
+  const actual1 = gendiff(file1, file2, 'plain');
   expect(actual1).toBe(right);
 });
 
@@ -53,6 +71,15 @@ test('JSON/YAML stylish', () => {
   expect(actual1).toBe(right);
 });
 
+test('JSON/YAML plain', () => {
+  const path = getFixturePath('right.txt');
+  const right = fs.readFileSync(path, 'utf-8').trim();
+  const file1 = getFixturePath('file1.json');
+  const file2 = getFixturePath('file2.yml');
+  const actual1 = gendiff(file1, file2, 'plain');
+  expect(actual1).toBe(right);
+});
+
 test('JSON/YAML default', () => {
   const path = getFixturePath('right.json');
   const right = fs.readFileSync(path, 'utf-8').trim();
@@ -67,7 +94,16 @@ test('YAML/JSON stylish', () => {
   const right = fs.readFileSync(path, 'utf-8').trim();
   const file1 = getFixturePath('file1.yaml');
   const file2 = getFixturePath('file2.json');
-  const actual1 = gendiff(file1, file2);
+  const actual1 = gendiff(file1, file2, 'stylish');
+  expect(actual1).toBe(right);
+});
+
+test('YAML/JSON plain', () => {
+  const path = getFixturePath('right.txt');
+  const right = fs.readFileSync(path, 'utf-8').trim();
+  const file1 = getFixturePath('file1.yaml');
+  const file2 = getFixturePath('file2.json');
+  const actual1 = gendiff(file1, file2, 'plain');
   expect(actual1).toBe(right);
 });
 
