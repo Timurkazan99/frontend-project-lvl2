@@ -33,22 +33,9 @@ const updateAfterSort = (obj, key, unordered) => {
   return temp;
 };
 
-const getKeys = (obj) => {
-  if (_.isEqual(obj, {})) {
-    return [];
-  }
-  return Object.keys(obj);
-};
-
-const getComon = (obj1, obj2) => {
-  const keys = _.uniq([...getKeys(obj1), ...getKeys(obj2)])
-    .filter((key) => includeBoth(key, obj1, obj2));
-  return keys;
-};
-
-const getUnique = (obj1, obj2) => {
-  const keys = _.uniq([...getKeys(obj1), ...getKeys(obj2)])
-    .filter((key) => firstInclude(key, obj1, obj2));
+const getKeys = (obj1, obj2, fun) => {
+  const keys = _.uniq([...Object.keys(obj1), ...Object.keys(obj2)])
+    .filter((key) => fun(key, obj1, obj2));
   return keys;
 };
 
@@ -76,9 +63,9 @@ const compareObj = (obj1, obj2) => {
     return temp;
   };
 
-  const common = getComon(obj1, obj2).reduce(iter, {});
-  const unique1 = getUnique(obj1, obj2).reduce((acc, key) => newKey(acc, key, obj1, '-'), {});
-  const unique2 = getUnique(obj2, obj1).reduce((acc, key) => newKey(acc, key, obj2, '+'), {});
+  const common = getKeys(obj1, obj2, includeBoth).reduce(iter, {});
+  const unique1 = getKeys(obj1, obj2, firstInclude).reduce((acc, key) => newKey(acc, key, obj1, '-'), {});
+  const unique2 = getKeys(obj2, obj1, firstInclude).reduce((acc, key) => newKey(acc, key, obj2, '+'), {});
   const unordered = { ...common, ...unique1, ...unique2 };
   const result = Object.keys(unordered)
     .sort(sortByKeys)
