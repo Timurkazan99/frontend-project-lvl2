@@ -1,0 +1,41 @@
+name: Test-Coverage
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '**'
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        platform: [ ubuntu-latest ]
+        node: [ '16' ]
+    name: test/node ${{ matrix.node }}/${{ matrix.platform }}
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-node@master
+      with:
+        node-version: ${{ matrix.node }}
+    - run: npm install
+    - run: npm run build --if-present
+    - run: npm test
+  coverage:
+    needs: [ test ]
+    name: coverage
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-node@master
+      with:
+        node-version: '16'
+    - run: npm install
+    - run: npm run build --if-present
+    - uses: paambaati/codeclimate-action@v2.2.4
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATEKEY }}
+      with:
+        coverageCommand: npm test -- --coverage --coverageProvider=v8
