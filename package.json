@@ -10,7 +10,7 @@
     "node": ">=14"
   },
   "scripts": {
-    "test": "npx jest --bail"
+    "test": "npx jest --bail",
   },
   "repository": {
     "type": "git",
