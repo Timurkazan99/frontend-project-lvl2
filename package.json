@@ -5,10 +5,12 @@
     "gendiff": "bin/gendiff.js"
   },
   "description": "[![Actions Status](https://github.com/Timurkazan99/frontend-project-lvl2/workflows/hexlet-check/badge.svg)](https://github.com/Timurkazan99/frontend-project-lvl2/actions)",
-  "type": "module",
   "main": "src/gendiff.js",
+  "engines": {
+    "node": ">=14"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx jest --bail"
   },
   "repository": {
     "type": "git",
@@ -19,15 +21,19 @@
   "bugs": {
     "url": "https://github.com/Timurkazan99/frontend-project-lvl2/issues"
   },
+  "type": "module",
   "homepage": "https://github.com/Timurkazan99/frontend-project-lvl2#readme",
   "dependencies": {
     "commander": "^8.0.0",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
+    "@jest/globals": "^27.0.5",
     "eslint": "^7.29.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.23.4",
-    "eslint-plugin-react": "^7.24.0"
+    "eslint-plugin-react": "^7.24.0",
+    "jest": "^27.0.5",
+    "jest-cli": "^27.0.5"
   }
 }
