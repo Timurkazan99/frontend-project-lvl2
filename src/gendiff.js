@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import ParseFile from './parsers.js';
-import formate from './formatters/formate.js';
+import formate from './formatters/index.js';
 
 const objInclude = (key, obj) => obj[key] !== undefined;
 const includeBoth = (key, obj1, obj2) => objInclude(key, obj1) && objInclude(key, obj2);
