@@ -1,42 +1,51 @@
 import _ from 'lodash';
-
-const getPrefix = (action) => {
-  switch (action) {
-    case 'Add':
-      return '+ ';
-    case 'Remove':
-      return '- ';
-    case '-Update':
-      return '- ';
-    case '+Update':
-      return '+ ';
-    default:
-      return '';
-  }
-};
+import {
+  getAction,
+  getValue,
+  getNewValue,
+  getKey,
+} from '../index.js';
 
 const getNewKey = (key, prefix) => {
   const keys = key.split('.');
   const depth = keys.length - 1;
-  keys[depth] = `${prefix}${keys[depth]}`;
-  return keys.join('.');
+  const newKey = keys.map((subKey) => {
+    if (keys.indexOf(subKey) !== depth) {
+      return subKey;
+    }
+    return `${prefix} ${subKey}`;
+  })
+    .join('.');
+  return newKey;
+};
+
+const getStylish = (acc, obj) => {
+  const temp = { ...acc };
+  const value = getValue(obj);
+  const newValue = (getNewValue(obj) === null) ? 'null' : getNewValue(obj);
+  const action = getAction(obj);
+  const key = getKey(obj);
+  switch (action) {
+    case 'added':
+      _.set(temp, getNewKey(key, '+'), value);
+      break;
+    case 'removed':
+      _.set(temp, getNewKey(key, '-'), value);
+      break;
+    case 'changed':
+      _.set(temp, getNewKey(key, '-'), value);
+      _.set(temp, getNewKey(key, '+'), newValue);
+      break;
+    default:
+      _.set(temp, key, value);
+      break;
+  }
+  return temp;
 };
 
 const formateStylish = (array) => {
-  const raw = array.reduce((acc, obj) => {
-    const { key, value, action } = obj;
-    const temp = { ...acc };
-    const prefix = getPrefix(action);
-    const newKey = getNewKey(key, prefix);
-    _.set(temp, newKey, value);
-    return temp;
-  }, {});
-  const result = JSON.stringify(raw, null, '\t')
-    .replaceAll(/,|"/g, '')
-    .replaceAll('\t', '    ')
-    .replaceAll('  -', '-')
-    .replaceAll('  +', '+')
-    .replaceAll(/ \n/g, '\n');
+  const raw = array.reduce(getStylish, {});
+  const result = JSON.stringify(raw, null, 2);
   return result;
 };
 

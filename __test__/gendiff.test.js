@@ -9,7 +9,7 @@ const __dirname = dirname(__filename);
 const getFixturePath = (filename) => join(__dirname, '..', '__fixtures__', filename);
 
 test('JSON/JSON stylish', () => {
-  const path = getFixturePath('right.json');
+  const path = getFixturePath('right_stylish.txt');
   const right = fs.readFileSync(path, 'utf-8').trim();
   const file1 = getFixturePath('file1.json');
   const file2 = getFixturePath('file2.json');
@@ -18,7 +18,7 @@ test('JSON/JSON stylish', () => {
 });
 
 test('JSON/JSON plain', () => {
-  const path = getFixturePath('right.txt');
+  const path = getFixturePath('right_plain.txt');
   const right = fs.readFileSync(path, 'utf-8').trim();
   const file1 = getFixturePath('file1.json');
   const file2 = getFixturePath('file2.json');
@@ -26,8 +26,17 @@ test('JSON/JSON plain', () => {
   expect(actual1).toBe(right);
 });
 
+test('JSON/JSON json', () => {
+  const path = getFixturePath('right_json.txt');
+  const right = fs.readFileSync(path, 'utf-8').trim();
+  const file1 = getFixturePath('file1.json');
+  const file2 = getFixturePath('file2.json');
+  const actual1 = gendiff(file1, file2, 'json');
+  expect(actual1).toBe(right);
+});
+
 test('JSON/JSON default', () => {
-  const path = getFixturePath('right.json');
+  const path = getFixturePath('right_stylish.txt');
   const right = fs.readFileSync(path, 'utf-8').trim();
   const file1 = getFixturePath('file1.json');
   const file2 = getFixturePath('file2.json');
@@ -36,7 +45,7 @@ test('JSON/JSON default', () => {
 });
 
 test('YAML/YAML stylish', () => {
-  const path = getFixturePath('right.json');
+  const path = getFixturePath('right_stylish.txt');
   const right = fs.readFileSync(path, 'utf-8').trim();
   const file1 = getFixturePath('file1.yaml');
   const file2 = getFixturePath('file2.yml');
@@ -45,7 +54,7 @@ test('YAML/YAML stylish', () => {
 });
 
 test('YAML/YAML plain', () => {
-  const path = getFixturePath('right.txt');
+  const path = getFixturePath('right_plain.txt');
   const right = fs.readFileSync(path, 'utf-8').trim();
   const file1 = getFixturePath('file1.yaml');
   const file2 = getFixturePath('file2.yml');
@@ -53,8 +62,17 @@ test('YAML/YAML plain', () => {
   expect(actual1).toBe(right);
 });
 
+test('YAML/YAML json', () => {
+  const path = getFixturePath('right_json.txt');
+  const right = fs.readFileSync(path, 'utf-8').trim();
+  const file1 = getFixturePath('file1.yaml');
+  const file2 = getFixturePath('file2.yml');
+  const actual1 = gendiff(file1, file2, 'json');
+  expect(actual1).toBe(right);
+});
+
 test('YAML/YAML default', () => {
-  const path = getFixturePath('right.json');
+  const path = getFixturePath('right_stylish.txt');
   const right = fs.readFileSync(path, 'utf-8').trim();
   const file1 = getFixturePath('file1.yaml');
   const file2 = getFixturePath('file2.yml');
@@ -63,7 +81,7 @@ test('YAML/YAML default', () => {
 });
 
 test('JSON/YAML stylish', () => {
-  const path = getFixturePath('right.json');
+  const path = getFixturePath('right_stylish.txt');
   const right = fs.readFileSync(path, 'utf-8').trim();
   const file1 = getFixturePath('file1.json');
   const file2 = getFixturePath('file2.yml');
@@ -72,7 +90,7 @@ test('JSON/YAML stylish', () => {
 });
 
 test('JSON/YAML plain', () => {
-  const path = getFixturePath('right.txt');
+  const path = getFixturePath('right_plain.txt');
   const right = fs.readFileSync(path, 'utf-8').trim();
   const file1 = getFixturePath('file1.json');
   const file2 = getFixturePath('file2.yml');
@@ -80,8 +98,17 @@ test('JSON/YAML plain', () => {
   expect(actual1).toBe(right);
 });
 
+test('JSON/YAML json', () => {
+  const path = getFixturePath('right_json.txt');
+  const right = fs.readFileSync(path, 'utf-8').trim();
+  const file1 = getFixturePath('file1.json');
+  const file2 = getFixturePath('file2.yml');
+  const actual1 = gendiff(file1, file2, 'json');
+  expect(actual1).toBe(right);
+});
+
 test('JSON/YAML default', () => {
-  const path = getFixturePath('right.json');
+  const path = getFixturePath('right_stylish.txt');
   const right = fs.readFileSync(path, 'utf-8').trim();
   const file1 = getFixturePath('file1.json');
   const file2 = getFixturePath('file2.yml');
@@ -90,7 +117,7 @@ test('JSON/YAML default', () => {
 });
 
 test('YAML/JSON stylish', () => {
-  const path = getFixturePath('right.json');
+  const path = getFixturePath('right_stylish.txt');
   const right = fs.readFileSync(path, 'utf-8').trim();
   const file1 = getFixturePath('file1.yaml');
   const file2 = getFixturePath('file2.json');
@@ -99,7 +126,7 @@ test('YAML/JSON stylish', () => {
 });
 
 test('YAML/JSON plain', () => {
-  const path = getFixturePath('right.txt');
+  const path = getFixturePath('right_plain.txt');
   const right = fs.readFileSync(path, 'utf-8').trim();
   const file1 = getFixturePath('file1.yaml');
   const file2 = getFixturePath('file2.json');
@@ -107,8 +134,17 @@ test('YAML/JSON plain', () => {
   expect(actual1).toBe(right);
 });
 
+test('YAML/JSON json', () => {
+  const path = getFixturePath('right_json.txt');
+  const right = fs.readFileSync(path, 'utf-8').trim();
+  const file1 = getFixturePath('file1.yaml');
+  const file2 = getFixturePath('file2.json');
+  const actual1 = gendiff(file1, file2, 'json');
+  expect(actual1).toBe(right);
+});
+
 test('YAML/JSON default', () => {
-  const path = getFixturePath('right.json');
+  const path = getFixturePath('right_stylish.txt');
   const right = fs.readFileSync(path, 'utf-8').trim();
   const file1 = getFixturePath('file1.yaml');
   const file2 = getFixturePath('file2.json');

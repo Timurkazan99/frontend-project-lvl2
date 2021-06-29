@@ -1,5 +1,6 @@
 import formateStylish from './stylish.js';
 import formatePlain from './plain.js';
+import formateJson from './json.js';
 
 const getStyle = (style) => {
   switch (style) {
@@ -7,6 +8,8 @@ const getStyle = (style) => {
       return formateStylish;
     case 'plain':
       return formatePlain;
+    case 'json':
+      return formateJson;
     default:
       return formateStylish;
   }
