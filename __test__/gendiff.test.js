@@ -156,5 +156,5 @@ test('Wrong files', () => {
   const path1 = getFixturePath('file1.ym');
   const path2 = getFixturePath('file2.jso');
   const actual1 = gendiff(path1, path2);
-  expect(actual1).toBe('{}');
+  expect(actual1).toBe('{\n\n}');
 });

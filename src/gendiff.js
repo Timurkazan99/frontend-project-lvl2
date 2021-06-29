@@ -13,12 +13,12 @@ const getKeys = (obj1, obj2, fun) => {
   return keys;
 };
 
-const setAction = (key, value, action, newValue = undefined) => {
-  const withoutNewValue = { key, value, action };
+const setAction = (key, value, type, newValue = undefined) => {
+  const withoutNewValue = { key, type, value };
   const withNewValue = {
     key,
-    value,
-    action,
+    type,
+    oldValue: value,
     newValue,
   };
   if (newValue === undefined) {
@@ -27,36 +27,38 @@ const setAction = (key, value, action, newValue = undefined) => {
   return withNewValue;
 };
 
-const compareObj = (obj1, obj2, ancestor = '') => {
-  const getAncestor = (key) => (ancestor === '' ? key : `${ancestor}.${key}`);
+const compareObj = (obj1, obj2) => {
   const iter = (acc, key) => { // Функция для сравнения одинаковых свойств
     const temp = [...acc];
-    const newAncestor = getAncestor(key);
     if (isObject(obj1[key]) && isObject(obj2[key])) {
-      temp.push(compareObj(obj1[key], obj2[key], newAncestor));
+      const nested = {
+        key,
+        type: 'nested',
+        children: compareObj(obj1[key], obj2[key]),
+      };
+      temp.push(nested);
     } else if (obj1[key] === obj2[key]) {
-      temp.push(setAction(newAncestor, obj1[key], 'unchanged'));
+      temp.push(setAction(key, obj1[key], 'unchanged'));
     } else {
-      temp.push(setAction(newAncestor, obj1[key], 'changed', obj2[key]));
+      temp.push(setAction(key, obj1[key], 'changed', obj2[key]));
     }
     return temp;
   };
 
   const common = getKeys(obj1, obj2, includeBoth).reduce(iter, []);
   const unique1 = getKeys(obj1, obj2, firstInclude)
-    .map((key) => setAction(getAncestor(key), obj1[key], 'removed'));
+    .map((key) => setAction(key, obj1[key], 'removed'));
   const unique2 = getKeys(obj2, obj1, firstInclude)
-    .map((key) => setAction(getAncestor(key), obj2[key], 'added'));
+    .map((key) => setAction(key, obj2[key], 'added'));
   const result = [...common, ...unique1, ...unique2].flat();
-  return result;
+  return _.sortBy(result, getKey);
 };
 
 const gendiff = (file1, file2, style) => {
   const obj1 = ParseFile(file1);
   const obj2 = ParseFile(file2);
   const temp = compareObj(obj1, obj2).flat();
-  const sorted = _.sortBy(temp, getKey);
-  const result = formate(sorted, style);
+  const result = formate(temp, style);
   return result;
 };
 

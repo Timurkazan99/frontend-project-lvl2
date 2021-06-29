@@ -1,52 +1,63 @@
-import _ from 'lodash';
 import {
   getAction,
   getValue,
   getNewValue,
   getKey,
+  getChildren,
+  isObject,
 } from '../index.js';
 
-const getNewKey = (key, prefix) => {
-  const keys = key.split('.');
-  const depth = keys.length - 1;
-  const newKey = keys.map((subKey) => {
-    if (keys.indexOf(subKey) !== depth) {
-      return subKey;
-    }
-    return `${prefix} ${subKey}`;
-  })
-    .join('.');
-  return newKey;
+const smallIdent = 2;
+const indent = 4;
+
+const buildIndent = (depth) => {
+  const indentCount = (depth * indent) + smallIdent;
+  return ' '.repeat(indentCount);
 };
 
-const getStylish = (acc, obj) => {
-  const temp = { ...acc };
-  const value = getValue(obj);
-  const newValue = (getNewValue(obj) === null) ? 'null' : getNewValue(obj);
-  const action = getAction(obj);
-  const key = getKey(obj);
+const stringify = (item, depth) => {
+  if (!isObject(item)) {
+    return item;
+  }
+
+  const keys = Object.keys(item);
+
+  const result = keys.map((key) => `${buildIndent(depth + 1)}  ${key}: ${stringify(item[key], depth + 1)}`);
+
+  return `{\n${result.join('\n')}\n${' '.repeat((depth + 1) * indent)}}`;
+};
+
+const getStylish = (item, depth, fun) => {
+  const key = getKey(item);
+  const value = getValue(item);
+  const newValue = getNewValue(item);
+  const action = getAction(item);
   switch (action) {
     case 'added':
-      _.set(temp, getNewKey(key, '+'), value);
-      break;
+      return `${buildIndent(depth)}+ ${key}: ${stringify(value, depth)}`;
     case 'removed':
-      _.set(temp, getNewKey(key, '-'), value);
-      break;
-    case 'changed':
-      _.set(temp, getNewKey(key, '-'), value);
-      _.set(temp, getNewKey(key, '+'), newValue);
-      break;
+      return `${buildIndent(depth)}- ${key}: ${stringify(value, depth)}`;
+    case 'changed': {
+      const tempStr1 = `${buildIndent(depth)}- ${key}: ${stringify(value, depth)}`;
+      const tempStr2 = `${buildIndent(depth)}+ ${key}: ${stringify(newValue, depth)}`;
+      return `${tempStr1}\n${tempStr2}`;
+    }
+    case 'unchanged':
+      return `${buildIndent(depth)}  ${key}: ${stringify(value, depth)}`;
+    case 'nested':
+      return `${buildIndent(depth)}  ${key}: ${fun(getChildren(item), depth + 1)}`;
     default:
-      _.set(temp, key, value);
-      break;
+      return [];
   }
-  return temp;
 };
 
 const formateStylish = (array) => {
-  const raw = array.reduce(getStylish, {});
-  const result = JSON.stringify(raw, null, 2);
-  return result;
+  const iter = (coll, depth) => {
+    const result = coll.map((item) => getStylish(item, depth, iter));
+    return `{\n${result.join('\n')}\n${' '.repeat(depth * indent)}}`;
+  };
+
+  return iter(array, 0);
 };
 
 export default formateStylish;
