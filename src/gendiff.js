@@ -28,24 +28,21 @@ const setAction = (key, value, type, newValue = undefined) => {
 };
 
 const compareObj = (obj1, obj2) => {
-  const iter = (acc, key) => { // Функция для сравнения одинаковых свойств
-    const temp = [...acc];
+  const iter = (key) => { // Функция для сравнения одинаковых свойств
     if (isObject(obj1[key]) && isObject(obj2[key])) {
       const nested = {
         key,
         type: 'nested',
         children: compareObj(obj1[key], obj2[key]),
       };
-      temp.push(nested);
-    } else if (obj1[key] === obj2[key]) {
-      temp.push(setAction(key, obj1[key], 'unchanged'));
-    } else {
-      temp.push(setAction(key, obj1[key], 'changed', obj2[key]));
+      return nested;
+    } if (obj1[key] === obj2[key]) {
+      return setAction(key, obj1[key], 'unchanged');
     }
-    return temp;
+    return setAction(key, obj1[key], 'changed', obj2[key]);
   };
 
-  const common = getKeys(obj1, obj2, includeBoth).reduce(iter, []);
+  const common = getKeys(obj1, obj2, includeBoth).map(iter);
   const unique1 = getKeys(obj1, obj2, firstInclude)
     .map((key) => setAction(key, obj1[key], 'removed'));
   const unique2 = getKeys(obj2, obj1, firstInclude)
